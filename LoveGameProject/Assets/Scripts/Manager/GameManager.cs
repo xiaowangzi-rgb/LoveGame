@@ -5,15 +5,19 @@ using Events;
 using UnityEngine;
 
 
-
-public class GameManager : TSingleton<GameManager>
-{
+/// <summary>
+/// 游戏管理器
+/// </summary>
+public class GameManager : TSingleton<GameManager>{
     private Queue<GameLoader> m_InitQueue = new Queue<GameLoader>();
     private bool m_IsInit = false;
+    public static PlotManager PlotManager => Singleton.m_PlotManager;
+    private PlotManager m_PlotManager;
 
     public void Init(){
         m_InitQueue.Enqueue(new GameLoader(InitData));
         m_InitQueue.Enqueue(new GameLoader(InitTable));
+        m_InitQueue.Enqueue(new GameLoader(InitManager));
         m_InitQueue.Enqueue(new GameLoader(InitScene));
         m_InitQueue.Enqueue(new GameLoader(InitUI));
         m_IsInit = true;
@@ -21,6 +25,8 @@ public class GameManager : TSingleton<GameManager>
 
     private void InitTable(Action loadedAction){
         Debug.Log("InitTable");
+        TableConfigManager.Singleton.Init();
+        TableConfigManager.Singleton.LoadTable();
         loadedAction?.Invoke();
     }
 
@@ -36,6 +42,15 @@ public class GameManager : TSingleton<GameManager>
 
     private void InitUI(Action loadedAction){
         Debug.Log("InitUI");
+        loadedAction?.Invoke();
+    }
+
+    private void InitManager(Action loadedAction){
+        Debug.Log("InitManager");
+        if(m_PlotManager == null){
+            m_PlotManager = new PlotManager();
+        }
+        m_PlotManager.Init();
         loadedAction?.Invoke();
     }
 
