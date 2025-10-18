@@ -53,6 +53,40 @@ using UnityEngine.UI;
             }).setEase(ease);
         }
 
+        /// <summary>
+        /// 说话
+        /// </summary>
+        /// <param name="trans"></param>
+        /// <param name="text"></param>
+        /// <param name="duration"></param>
+        /// <param name="hideDuration"></param>
+        /// <param name="onComplete"></param>
+        public static void DoSpeak(this Transform trans, string text, float duration, float hideDuration, Action onComplete)
+        {
+            var speakComponent = trans.GetComponent<SpeakComponent>();
+            if (speakComponent == null){
+                onComplete?.Invoke();
+                return;
+            }
+            speakComponent.Speak(trans, text, duration, hideDuration, onComplete);
+        }
+
+        public static bool IsHasLayer(int[] layerMasks, LayerMask targetLayer)
+        {
+            if (layerMasks == null || layerMasks.Length <= 0)
+            {
+                return false;
+            }
+            foreach (var layerMask in layerMasks)
+            {
+                if (layerMask == targetLayer)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         //public static void AlphaTransform(Transform trans, float from, float to, float time, LeanTweenType ease)
         //{
         //    var sps = trans?.GetComponentsInChildren<SpriteRenderer>();

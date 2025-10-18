@@ -12,7 +12,9 @@ public class GameManager : TSingleton<GameManager>{
     private Queue<GameLoader> m_InitQueue = new Queue<GameLoader>();
     private bool m_IsInit = false;
     public static PlotManager PlotManager => Singleton.m_PlotManager;
+    public static NpcManager NpcManager => Singleton.m_NpcManager;
     private PlotManager m_PlotManager;
+    private NpcManager m_NpcManager;
 
     public void Init(){
         m_InitQueue.Enqueue(new GameLoader(InitData));
@@ -50,7 +52,11 @@ public class GameManager : TSingleton<GameManager>{
         if(m_PlotManager == null){
             m_PlotManager = new PlotManager();
         }
+        if(m_NpcManager == null){
+            m_NpcManager = new NpcManager();
+        }
         m_PlotManager.Init();
+        m_NpcManager.Init();
         loadedAction?.Invoke();
     }
 
@@ -64,6 +70,17 @@ public class GameManager : TSingleton<GameManager>{
             if(!loader.m_State){
                 loader.OnLoad(()=>m_InitQueue.Dequeue());
             }
+        }
+    }
+
+    public override void Clear()
+    {
+        base.Clear();
+        if(m_PlotManager != null){
+            m_PlotManager.OnClear();
+        }
+        if(m_NpcManager != null){
+            m_NpcManager.Clear();
         }
     }
 }

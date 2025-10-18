@@ -16,6 +16,6 @@ public class TableConfigManager : TSingleton<TableConfigManager>{
     }
 
     public void LoadTable(){
-        PlotTable.Load("Submarine_group_config.csv", () => new TablePlotConfig());
+        //PlotTable.Load("Submarine_group_config.csv", () => new TablePlotConfig());
     }
 }
