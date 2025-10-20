@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 /// <summary>
 /// 房间管理器 管理房间的创建、销毁、切换等操作
 /// </summary>
 public class RoomManager
 {
     private const string ROOM_PATH = "Rooms/";
+    public const string MAIN_ROOM_NAME = "Room_01";
     /// <summary>
     /// 房间根节点
     /// </summary>
@@ -145,7 +147,7 @@ public class RoomManager
             return null;
         }
         roomObj.transform.localPosition = Vector3.zero;
-        roomObj.transform.localRotation = Quaternion.identity;
+        //roomObj.transform.localRotation = Quaternion.identity;
         roomObj.transform.localScale = Vector3.one;
         return roomObj.GetComponent<Room>();
     }

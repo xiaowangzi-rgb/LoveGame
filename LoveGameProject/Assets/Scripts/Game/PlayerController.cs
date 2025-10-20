@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IObject
 {
     private PlayerObjNavMesh _nowObj;
     private Camera _camera;
+    private Room _currentRoom;
 
     [Header("相机X轴限制")]
     public Vector2 CameraClampX;
@@ -19,6 +20,10 @@ public class PlayerController : MonoBehaviour
 
     [Header("是否可以移动")]
     public bool isCanMove = true;
+
+    public enum PlayerEventParam {
+        EnterRoom,
+    }
 
     private void Awake()
     {
@@ -105,5 +110,32 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     /// <param name="eventParam"></param>
     public void OnTriggerEvent(PlayerEventData eventParam){
+        if (eventParam == null) {
+            return;
+        }
+        //进入房间
+        if (eventParam.eventParam == PlayerEventParam.EnterRoom.ToString()) {
+            _nowObj?.ResetMove();
+        }
+    }
+
+    public Room GetRoom() {
+        return _currentRoom;
+    }
+
+    /// <summary>
+    /// 创建玩家
+    /// </summary>
+    /// <returns></returns>
+    public static PlayerController CreatePlayer() {
+        var player = Resources.Load<GameObject>("Players/Player");
+        if (player == null) {
+            return null;
+        }
+        var playerObj = GameObject.Instantiate(player);
+        if (playerObj == null) {
+            return null;
+        }
+        return playerObj.GetComponent<PlayerController>();
     }
 }

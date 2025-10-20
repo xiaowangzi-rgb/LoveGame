@@ -13,6 +13,8 @@ public class Npc : MonoBehaviour, INpc {
     public RandomPatrolBehaviorData RandomPatrolBehaviorData;
     [Header("固定巡逻行为数据")]
     public FixPatrolBehaviorData FixPatrolBehaviorData;
+    [Header("当前房间")]
+    public Room CurrentRoom;
     /// <summary>
     /// 当前行为
     /// </summary>
@@ -148,6 +150,12 @@ public class Npc : MonoBehaviour, INpc {
     {
         _npcObj = null;
         _playerObjNavMesh = null;
+        CurrentRoom?.OnExit(gameObject);
         GameObject.Destroy(gameObject);
+    }
+
+    public Room GetRoom()
+    {
+        return CurrentRoom;
     }
 }

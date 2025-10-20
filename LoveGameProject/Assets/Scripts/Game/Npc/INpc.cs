@@ -26,8 +26,15 @@ public class DefaultNpcStyle : NpcStyle {
 /// <summary>
 /// Npc接口
 /// </summary>
-public interface INpc {
+public interface INpc : IObject {
     void DoSpeak(string text);
     void DoMove(Vector3 pos, Action OnComplete);
     void Destroy();
+}
+
+/// <summary>
+/// 对象接口
+/// </summary>
+public interface IObject {
+    Room GetRoom();
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Events;
 using UnityEngine;
 
@@ -10,9 +11,9 @@ using UnityEngine;
 public class NpcManager {
 
     /// <summary>
-    /// NPC字典
+    /// NPC字典 和房间对应 一个房间可以有多个NPC
     /// </summary>
-    private List<Npc> _npcList {get; set;} = new List<Npc>();
+    private Dictionary<Room,List<Npc>> _npcList {get; set;} = new Dictionary<Room,List<Npc>>();
 
     /// <summary>
     /// 是否初始化
@@ -23,7 +24,7 @@ public class NpcManager {
     /// 初始化NPC管理器
     /// </summary>
     public void Init(){
-        _npcList = new List<Npc>();
+        _npcList = new Dictionary<Room,List<Npc>>();
         IsInit = true;
     }
 
@@ -48,10 +49,19 @@ public class NpcManager {
     /// <param name="npc"></param>
     public bool AddNpc(Npc npc){
         if(_npcList == null){
-            _npcList = new List<Npc>();
+            _npcList = new Dictionary<Room,List<Npc>>();
         }
-        if (npc != null && !_npcList.Contains(npc)){
-            _npcList.Add(npc);
+        if (npc.CurrentRoom == null) {
+            Debug.LogError("NPC当前房间为空,无法添加NPC");
+            return false;
+        }
+        List<Npc> npcList = null;
+        if (npc != null && !_npcList.TryGetValue(npc.CurrentRoom, out npcList)){
+            npcList = new List<Npc>();
+            _npcList.Add(npc.CurrentRoom, npcList);
+        }
+        if (npcList != null && !npcList.Contains(npc)){
+            npcList.Add(npc);
             return true;
         }
         return false;
@@ -76,12 +86,43 @@ public class NpcManager {
     /// </summary>
     /// <param name="npc"></param>
     public void RemoveNpc(Npc npc){
-        if (npc != null){
-            npc.Destroy();
+        if (npc == null) {
+            return;
         }
-        if (_npcList != null){
-            _npcList.Remove(npc);
+        //销毁NPC
+        npc.Destroy();
+        //移除NPC
+        if (_npcList != null && npc.CurrentRoom != null && _npcList.TryGetValue(npc.CurrentRoom, out var npcList)){
+            if (npcList != null && npcList.Contains(npc)){
+                npcList.Remove(npc);
+            }
         }
+    }
+
+    /// <summary>
+    /// 获取房间所有NPC
+    /// </summary>
+    /// <param name="room"></param>
+    /// <returns></returns>
+    public List<Npc> GetAllNpc(Room room) {
+        if (_npcList == null || _npcList.Count <= 0) {
+            return new List<Npc>();
+        }
+        if (!_npcList.TryGetValue(room, out var npcList)) {
+            return new List<Npc>();
+        }
+        return npcList;
+    }
+
+    /// <summary>
+    /// 获取所有NPC
+    /// </summary>
+    /// <returns></returns>
+    public List<Npc> GetAllNpc() {
+        if (_npcList == null || _npcList.Count <= 0) {
+            return new List<Npc>();
+        }
+        return _npcList.Values.SelectMany(npc => npc).ToList();
     }
 
     /// <summary>
@@ -89,10 +130,14 @@ public class NpcManager {
     /// </summary>
     public void Clear(){
         if (_npcList != null && _npcList.Count > 0){
-            foreach (var npc in _npcList)
-            {
-                if (npc != null){
-                    npc.Destroy();
+            foreach (var npc in _npcList){
+                if (npc.Value != null && npc.Value.Count > 0){
+                    for (int i = npc.Value.Count - 1; i >= 0; i--){
+                        if (npc.Value[i] != null){
+                            npc.Value[i].Destroy();
+                        }
+                    }
+                    npc.Value.Clear();
                 }
             }
         }

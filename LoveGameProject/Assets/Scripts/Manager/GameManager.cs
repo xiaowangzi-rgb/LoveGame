@@ -24,6 +24,7 @@ public class GameManager : TSingleton<GameManager>{
         m_InitQueue.Enqueue(new GameLoader(InitManager));
         m_InitQueue.Enqueue(new GameLoader(InitScene));
         m_InitQueue.Enqueue(new GameLoader(InitUI));
+        m_InitQueue.Enqueue(new GameLoader(BeginPlay));
         m_IsInit = true;
     }
 
@@ -46,6 +47,14 @@ public class GameManager : TSingleton<GameManager>{
 
     private void InitUI(Action loadedAction){
         Debug.Log("InitUI");
+        loadedAction?.Invoke();
+    }
+
+    private void BeginPlay(Action loadedAction){
+        Debug.Log("BeginPlay");
+        //加载第一个主房间
+        var player = PlayerController.CreatePlayer();
+        RoomManager.EnterRoom(player.gameObject, RoomManager.MAIN_ROOM_NAME, 1);
         loadedAction?.Invoke();
     }
 
