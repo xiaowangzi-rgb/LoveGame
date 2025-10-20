@@ -117,4 +117,12 @@ public class PlayerObjNavMesh : MonoBehaviour
         _currentState = PlayerState.MOVE;
         _onMoveComplete = OnComplete;
     }
+
+    public void ResetMove() {
+        _goalPos = transform.position;
+        _currentState = PlayerState.IDLE;
+        _onMoveComplete?.Invoke();
+        _navMeshAgent.velocity = Vector3.zero;
+        _navMeshAgent.ResetPath();
+    }
 }

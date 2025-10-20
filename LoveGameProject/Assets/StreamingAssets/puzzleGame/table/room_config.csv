@@ -1,0 +1,5 @@
+id,room_name,transfer_point_id,to_room_name,to_transfer_point_id,is_to_origin_point
+INT,STRING,INT,STRING,INT,INT
+#,策划备注,发送频次；每x秒可发送一条消息,可推送的本地时间段；服务端和本地共同尊守,每日服务端推送信息数量上限,每日服务端推送信息数量上限
+1,Room_01,1,Room_01,2,0
+2,Room_01,2,,,1

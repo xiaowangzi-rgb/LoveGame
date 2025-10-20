@@ -13,8 +13,10 @@ public class GameManager : TSingleton<GameManager>{
     private bool m_IsInit = false;
     public static PlotManager PlotManager => Singleton.m_PlotManager;
     public static NpcManager NpcManager => Singleton.m_NpcManager;
+    public static RoomManager RoomManager => Singleton.m_RoomManager;
     private PlotManager m_PlotManager;
     private NpcManager m_NpcManager;
+    private RoomManager m_RoomManager;
 
     public void Init(){
         m_InitQueue.Enqueue(new GameLoader(InitData));
@@ -55,8 +57,12 @@ public class GameManager : TSingleton<GameManager>{
         if(m_NpcManager == null){
             m_NpcManager = new NpcManager();
         }
+        if(m_RoomManager == null){
+            m_RoomManager = new RoomManager();
+        }
         m_PlotManager.Init();
         m_NpcManager.Init();
+        m_RoomManager.Init();
         loadedAction?.Invoke();
     }
 

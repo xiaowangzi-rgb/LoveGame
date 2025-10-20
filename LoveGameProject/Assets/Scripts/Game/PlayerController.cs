@@ -20,11 +20,16 @@ public class PlayerController : MonoBehaviour
     [Header("是否可以移动")]
     public bool isCanMove = true;
 
+    private void Awake()
+    {
+        //注册事件
+        GloabEventManager.Instance.AddListener<PlayerEventData>(EventType.Player.ToString(),OnTriggerEvent);
+    }
+
     private void Start()
     {
         _camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         _nowObj = GetComponent<PlayerObjNavMesh>();
-
         InitState();
     }
 
@@ -93,5 +98,12 @@ public class PlayerController : MonoBehaviour
     /// <param name="text"></param>
     public void PlayerSpeak(string text) {
         Tools.DoSpeak(transform, text, 1f, 1.0f, null);
+    }
+
+    /// <summary>
+    /// 触发事件
+    /// </summary>
+    /// <param name="eventParam"></param>
+    public void OnTriggerEvent(PlayerEventData eventParam){
     }
 }

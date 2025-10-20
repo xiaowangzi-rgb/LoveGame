@@ -11,6 +11,7 @@ public enum InteractionType
     Speak,          // 对话
     PickUp,         // 拾取
     Examine,        // 检查
+    Event, //
 }
 
 /// <summary>
@@ -199,7 +200,7 @@ public abstract class InteractionComponent : MonoBehaviour
         float distance = Vector2.Distance(transform.position, target.transform.position);
         if (distance > InteractionDistance)
         {
-            Debug.Log("距离太远，无法交互");
+            //Debug.Log("距离太远，无法交互");
             return;
         }
         // 如果已经交互过，则不执行
