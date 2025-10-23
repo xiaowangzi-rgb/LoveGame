@@ -5,7 +5,7 @@ namespace SharedLibary {
     /// <summary>
     /// 所有UI的父
     /// </summary>
-    public abstract class WObject : IWObject {
+    public abstract class WObject : IWObject, IUITween {
         /// <summary>
         /// 当前是否显示状态
         /// </summary>
@@ -13,40 +13,54 @@ namespace SharedLibary {
             get { return gameObject != null && gameObject.activeSelf && gameObject.activeInHierarchy; }
         }
 
-        public Transform transform { get { return gameObject?.transform; } }
+        public Transform transform {
+            get {
+                if (gameObject == null) {
+                    return null;
+                }
+                return gameObject.transform;
+            }
+        }
 
         public Vector3 initPos { get; private set; }
 
         public GameObject gameObject { get; set; }
+        /// <summary>
+        /// tween管理器
+        /// </summary>
+        protected BaseUITween mUITween;
 
         public virtual bool DontDestory => false;
 
         protected abstract void InitUI();
 
+
         protected virtual void InitValue() {
+            mUITween = new BaseUITween();
+            mUITween.OnTweenInit();
         }
 
         protected virtual void AddEvent() {
         }
 
-        ///// <summary>
-        ///// 给目标对象创建gameobject
-        ///// </summary>
-        ///// <param name="target">目标对象</param>
-        ///// <param name="path">路径</param>
-        ///// <param name="parent">父节点</param>
-        ///// <returns></returns>
-        //public static WObject Create(WObject target, string path, Transform parent) {
-        //    if (target == null) {
-        //        return null;
-        //    }
-        //    GameObject obj = RPrefab.Singleton.Instantiate(path, parent);
-        //    if (obj == null) {
-        //        return null;
-        //    }
-        //    obj.name = PathUtils.GetFileNameFormURL(path);
-        //    return Create(target, obj);
-        //}
+        /// <summary>
+        /// 给目标对象创建gameobject
+        /// </summary>
+        /// <param name="target">目标对象</param>
+        /// <param name="path">路径</param>
+        /// <param name="parent">父节点</param>
+        /// <returns></returns>
+        public static WObject Create(WObject target, string path, Transform parent) {
+            if (target == null) {
+                return null;
+            }
+            GameObject obj = RPrefab.Singleton.Instantiate(path, parent);
+            if (obj == null) {
+                return null;
+            }
+            obj.name = PathUtils.GetFileNameFormURL(path);
+            return Create(target, obj);
+        }
 
         /// <summary>
         /// 创建一个WObject,和obj关联起来
@@ -56,7 +70,7 @@ namespace SharedLibary {
         /// <returns></returns>
         public static T Create<T>(GameObject obj) where T : WObject, new() {
             if (obj == null) {
-                Debug.Log("Create WObject error! type is" + typeof(T));
+                Debug.LogError("Create WObject error! type is" + typeof(T));
                 return null;
             }
             if (ObjectManager.Singleton.TryGetObject(obj.GetInstanceID(), out IWObject value)) {
@@ -73,7 +87,7 @@ namespace SharedLibary {
         /// <returns></returns>
         public static WObject Create(GameObject obj, System.Func<WObject> func) {
             if (obj == null) {
-                Debug.Log("Create WObject error!");
+                Debug.LogError("Create WObject error!");
                 return null;
             }
             if (ObjectManager.Singleton.TryGetObject(obj.GetInstanceID(), out IWObject value)) {
@@ -82,52 +96,50 @@ namespace SharedLibary {
             return Create(func?.Invoke(), obj);
         }
 
-        ///// <summary>
-        ///// 创建一个Wobject
-        ///// </summary>
-        ///// <param name="path"></param>
-        ///// <param name="parent"></param>
-        ///// <param name="func"></param>
-        ///// <returns></returns>
-        //public static WObject Create(string path, Transform parent, System.Func<WObject> func) {
-        //    GameObject obj = RPrefab.Singleton.Instantiate(path, parent);
-        //    if (obj == null) {
-        //        return null;
-        //    }
-        //    obj.name = PathUtils.GetFileNameFormURL(path);
+        /// <summary>
+        /// 创建一个Wobject
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="parent"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static WObject Create(string path, Transform parent, System.Func<WObject> func) {
+            GameObject obj = RPrefab.Singleton.Instantiate(path, parent);
+            if (obj == null) {
+                return null;
+            }
+            obj.name = PathUtils.GetFileNameFormURL(path);
 
-        //    return Create(func?.Invoke(), obj);
-        //}
+            return Create(func?.Invoke(), obj);
+        }
 
-        ///// <summary>
-        ///// 实例化一个gameobjcet,并且创建与之关联的WObject
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="obj"></param>
-        ///// <returns></returns>
-        //public static T InInstantiate<T>(GameObject obj) where T : WObject, new() {
-        //    if (obj == null) {
-        //        LogUtils.LogError("Create WObject error! type is" + typeof(T));
-        //        return null;
-        //    }
-        //    var v = RPrefab.Singleton.Instantiate(obj, obj.transform.parent);
-        //    return (T)Create(new T(), v);
-        //}
+        /// <summary>
+        /// 实例化一个gameobjcet,并且创建与之关联的WObject
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static T InInstantiate<T>(GameObject obj) where T : WObject, new() {
+            if (obj == null) {
+                Debug.LogError("Create WObject error! type is" + typeof(T));
+                return null;
+            }
+            var v = RPrefab.Singleton.Instantiate(obj, obj.transform.parent);
+            return (T)Create(new T(), v);
+        }
 
         /// <summary>
         /// 把一个WObject和GameObject关联起来
         /// </summary>
         /// <param name="target"></param>
         /// <param name="obj"></param>
-        public static WObject Create(WObject target, GameObject obj) {
+        public static WObject Create(WObject target, GameObject obj, bool isTryAdd = true) {
             if (target == null || obj == null) {
-                Debug.Log("Create Error!");
                 return null;
             }
             target.gameObject = obj;
-            ObjectManager.Singleton.TryAdd(target, target.gameObject);
+            if (isTryAdd) ObjectManager.Singleton.TryAdd(target, target.gameObject);
             target.initPos = target.transform.position;
-
             target.InitUI();
             target.InitValue();
             target.AddEvent();
@@ -142,7 +154,23 @@ namespace SharedLibary {
         /// 直接隐藏
         /// </summary>
         public virtual void Hide() {
+            ClearAllTween();
             SetActive(false);
+        }
+
+        protected void ClearAllTween() {
+            if (mUITween != null) {
+                mUITween?.OnTweenClear();
+            }
+        }
+
+        /// <summary>
+        /// 直接隐藏
+        /// </summary>
+        public virtual void TryHide(bool isTimeOut) {
+            if (isTimeOut) {
+                Hide();
+            }
         }
 
         /// <summary>
@@ -156,7 +184,10 @@ namespace SharedLibary {
         }
 
         protected virtual void OnDestroy() {
-            GameObject.Destroy(gameObject);
+            if (mUITween != null) {
+                mUITween?.OnTweenClear();
+            }
+            MM.Common.Extensions.Destroy(gameObject);
             gameObject = null;
         }
 
@@ -168,7 +199,7 @@ namespace SharedLibary {
         /// <returns>如果此对象创建了WObject则返回，否则返回null。</returns>
         public static T GetWObject<T>(GameObject target) where T : WObject {
             if (target == null) {
-                Debug.Log("GetWObject error! type is" + typeof(T));
+                Debug.LogError("GetWObject error! type is" + typeof(T));
                 return null;
             }
             if (ObjectManager.Singleton.TryGetObject(target.GetInstanceID(), out IWObject value)) {
@@ -249,6 +280,38 @@ namespace SharedLibary {
 
         public void Destroy() {
             OnDestroy();
+        }
+
+        public int AddTween(int uniqueId) {
+            if (mUITween == null) {
+                mUITween = new BaseUITween();
+                mUITween.OnTweenInit();
+            }
+            return mUITween.AddTween(uniqueId);
+        }
+
+        public LTDescr AddTween(LTDescr tw) {
+            if (mUITween == null) {
+                mUITween = new BaseUITween();
+                mUITween.OnTweenInit();
+            }
+            return mUITween.AddTween(tw);
+        }
+
+        public LTDescr AddTween(LTDescr tw, GameObject obj) {
+            if (mUITween == null) {
+                mUITween = new BaseUITween();
+                mUITween.OnTweenInit();
+            }
+            return mUITween.AddTween(tw, obj);
+        }
+
+        public void CancelTween(GameObject twObj) {
+            mUITween?.CancelTween(twObj);
+        }
+
+        public void CancelTween(int id) {
+            mUITween?.CancelTween(id);
         }
     }
 }

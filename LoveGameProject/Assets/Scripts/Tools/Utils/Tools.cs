@@ -5,220 +5,247 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-    public static class Tools
+public static class Tools
+{
+    public static void AlphaSprites(GameObject obj, float from, float to, float time, LeanTweenType ease)
     {
-        public static void AlphaSprites(GameObject obj, float from, float to, float time, LeanTweenType ease)
+        if (obj == null)
         {
-            if (obj == null)
-            {
-                return;
-            }
-            if (!obj.activeInHierarchy)
-            {
-                obj.SetActive(true);
-            }
-            SpriteRenderer[] srs = obj.GetComponentsInChildren<SpriteRenderer>();
-            foreach (var v in srs)
-            {
-                LeanTween.value(v.gameObject, from, to, time).setOnUpdate((float val) =>
-                {
-                    Color c = v.color;
-                    c.a = val;
-                    v.color = c;
-                }).setEase(ease).updateNow();
-            }
+            return;
         }
-        public static LTDescr AlphaSprite(GameObject obj, float from, float to, float time, LeanTweenType ease)
+        if (!obj.activeInHierarchy)
         {
-            if (obj == null)
+            obj.SetActive(true);
+        }
+        SpriteRenderer[] srs = obj.GetComponentsInChildren<SpriteRenderer>();
+        foreach (var v in srs)
+        {
+            LeanTween.value(v.gameObject, from, to, time).setOnUpdate((float val) =>
             {
-                return null;
-            }
-            if (!obj.activeInHierarchy)
-            {
-                obj.SetActive(true);
-            }
-            SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-            if (sr == null)
-            {
-                return null;
-            }
-            return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
-            {
-                Color c = sr.color;
+                Color c = v.color;
                 c.a = val;
-                sr.color = c;
-            }).setEase(ease);
+                v.color = c;
+            }).setEase(ease).updateNow();
         }
-
-        /// <summary>
-        /// 说话
-        /// </summary>
-        /// <param name="trans"></param>
-        /// <param name="text"></param>
-        /// <param name="duration"></param>
-        /// <param name="hideDuration"></param>
-        /// <param name="onComplete"></param>
-        public static void DoSpeak(this Transform trans, string text, float duration, float hideDuration, Action onComplete)
+    }
+    public static LTDescr AlphaSprite(GameObject obj, float from, float to, float time, LeanTweenType ease)
+    {
+        if (obj == null)
         {
-            var speakComponent = trans.GetComponent<SpeakComponent>();
-            if (speakComponent == null){
-                onComplete?.Invoke();
-                return;
-            }
-            speakComponent.Speak(trans, text, duration, hideDuration, onComplete);
+            return null;
         }
-
-        public static bool IsHasLayer(int[] layerMasks, LayerMask targetLayer)
+        if (!obj.activeInHierarchy)
         {
-            if (layerMasks == null || layerMasks.Length <= 0)
-            {
-                return false;
-            }
-            foreach (var layerMask in layerMasks)
-            {
-                if (layerMask == targetLayer)
-                {
-                    return true;
-                }
-            }
+            obj.SetActive(true);
+        }
+        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            return null;
+        }
+        return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+        {
+            Color c = sr.color;
+            c.a = val;
+            sr.color = c;
+        }).setEase(ease);
+    }
+
+    /// <summary>
+    /// 说话
+    /// </summary>
+    /// <param name="trans"></param>
+    /// <param name="text"></param>
+    /// <param name="duration"></param>
+    /// <param name="hideDuration"></param>
+    /// <param name="onComplete"></param>
+    public static void DoSpeak(this Transform trans, string text, float duration, float hideDuration, Action onComplete)
+    {
+        var speakComponent = trans.GetComponent<SpeakComponent>();
+        if (speakComponent == null)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+        speakComponent.Speak(trans, text, duration, hideDuration, onComplete);
+    }
+
+    public static bool IsHasLayer(int[] layerMasks, LayerMask targetLayer)
+    {
+        if (layerMasks == null || layerMasks.Length <= 0)
+        {
             return false;
         }
-
-        //public static void AlphaTransform(Transform trans, float from, float to, float time, LeanTweenType ease)
-        //{
-        //    var sps = trans?.GetComponentsInChildren<SpriteRenderer>();
-        //    if (sps != null)
-        //    {
-        //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
-        //        {
-        //            for (int i = 0; i < sps.Length; ++i)
-        //            {
-        //                var sp = sps[i];
-        //                if (sp == null)
-        //                {
-        //                    continue;
-        //                }
-        //                Color c = sp.color;
-        //                c.a = value;
-        //                sp.color = c;
-        //            }
-        //        }).setEase(ease).updateNow();
-        //    }
-        //    var texts = trans?.GetComponentsInChildren<TextMeshPro>();
-        //    if (texts != null)
-        //    {
-        //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
-        //        {
-        //            for (int i = 0; i < texts.Length; ++i)
-        //            {
-        //                var sp = texts[i];
-        //                if (sp == null)
-        //                {
-        //                    continue;
-        //                }
-        //                Color c = sp.color;
-        //                c.a = value;
-        //                sp.color = c;
-        //            }
-        //        }).setEase(ease).updateNow();
-        //    }
-
-        //    var anims = trans?.GetComponentsInChildren<SkeletonAnimation>();
-        //    if (texts != null)
-        //    {
-        //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
-        //        {
-        //            for (int i = 0; i < anims.Length; ++i)
-        //            {
-        //                var anim = anims[i];
-        //                if (anim == null)
-        //                {
-        //                    continue;
-        //                }
-        //                anim.Skeleton.A = value;
-        //            }
-        //        }).setEase(ease).updateNow();
-        //    }
-        //}
-
-        //public static void AlphaRectTransform(Transform trans, float from, float to, float time, LeanTweenType ease)
-        //{
-        //    var sps = trans?.GetComponentsInChildren<Graphic>();
-        //    if (sps != null)
-        //    {
-        //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
-        //        {
-        //            for (int i = 0; i < sps.Length; ++i)
-        //            {
-        //                var sp = sps[i];
-        //                if (sp == null)
-        //                {
-        //                    continue;
-        //                }
-        //                Color c = sp.color;
-        //                c.a = value;
-        //                sp.color = c;
-        //            }
-        //        }).setEase(ease).updateNow();
-        //    }
-        //    var texts = trans?.GetComponentsInChildren<TextMeshProUGUI>();
-        //    if (texts != null)
-        //    {
-        //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
-        //        {
-        //            for (int i = 0; i < texts.Length; ++i)
-        //            {
-        //                var sp = texts[i];
-        //                if (sp == null)
-        //                {
-        //                    continue;
-        //                }
-        //                Color c = sp.color;
-        //                c.a = value;
-        //                sp.color = c;
-        //            }
-        //        }).setEase(ease).updateNow();
-        //    }
-
-        //    var anims = trans?.GetComponentsInChildren<SkeletonGraphic>();
-        //    if (texts != null)
-        //    {
-        //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
-        //        {
-        //            for (int i = 0; i < anims.Length; ++i)
-        //            {
-        //                var anim = anims[i];
-        //                if (anim == null)
-        //                {
-        //                    continue;
-        //                }
-        //                anim.Skeleton.A = value;
-        //            }
-        //        }).setEase(ease).updateNow();
-        //    }
-        //}
-
-        public static LTDescr AlphaImage(GameObject obj, float from, float to, float time)
+        foreach (var layerMask in layerMasks)
         {
-            var img = obj?.GetComponent<Image>();
+            if (layerMask == targetLayer)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void ListenerEvent(GameObject go, EventTriggerType eventType, UnityAction<BaseEventData> callback, bool clearSame)
+    {
+        EventTrigger eventTrigger = go.GetComponent<EventTrigger>();
+        if (eventTrigger == null)
+        {
+            eventTrigger = go.AddComponent<EventTrigger>();
+        }
+        EventTrigger.Entry entry = eventTrigger.triggers.Find(
+            item => item.eventID == eventType);
+
+        if (entry == null)
+        {
+            entry = new EventTrigger.Entry();
+            eventTrigger.triggers.Add(entry);
+        }
+        entry.eventID = eventType;
+        if (clearSame)
+        {
+            entry.callback.RemoveAllListeners();
+        }
+
+        entry.callback.AddListener(callback);
+    }
+
+    //public static void AlphaTransform(Transform trans, float from, float to, float time, LeanTweenType ease)
+    //{
+    //    var sps = trans?.GetComponentsInChildren<SpriteRenderer>();
+    //    if (sps != null)
+    //    {
+    //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
+    //        {
+    //            for (int i = 0; i < sps.Length; ++i)
+    //            {
+    //                var sp = sps[i];
+    //                if (sp == null)
+    //                {
+    //                    continue;
+    //                }
+    //                Color c = sp.color;
+    //                c.a = value;
+    //                sp.color = c;
+    //            }
+    //        }).setEase(ease).updateNow();
+    //    }
+    //    var texts = trans?.GetComponentsInChildren<TextMeshPro>();
+    //    if (texts != null)
+    //    {
+    //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
+    //        {
+    //            for (int i = 0; i < texts.Length; ++i)
+    //            {
+    //                var sp = texts[i];
+    //                if (sp == null)
+    //                {
+    //                    continue;
+    //                }
+    //                Color c = sp.color;
+    //                c.a = value;
+    //                sp.color = c;
+    //            }
+    //        }).setEase(ease).updateNow();
+    //    }
+
+    //    var anims = trans?.GetComponentsInChildren<SkeletonAnimation>();
+    //    if (texts != null)
+    //    {
+    //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
+    //        {
+    //            for (int i = 0; i < anims.Length; ++i)
+    //            {
+    //                var anim = anims[i];
+    //                if (anim == null)
+    //                {
+    //                    continue;
+    //                }
+    //                anim.Skeleton.A = value;
+    //            }
+    //        }).setEase(ease).updateNow();
+    //    }
+    //}
+
+    //public static void AlphaRectTransform(Transform trans, float from, float to, float time, LeanTweenType ease)
+    //{
+    //    var sps = trans?.GetComponentsInChildren<Graphic>();
+    //    if (sps != null)
+    //    {
+    //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
+    //        {
+    //            for (int i = 0; i < sps.Length; ++i)
+    //            {
+    //                var sp = sps[i];
+    //                if (sp == null)
+    //                {
+    //                    continue;
+    //                }
+    //                Color c = sp.color;
+    //                c.a = value;
+    //                sp.color = c;
+    //            }
+    //        }).setEase(ease).updateNow();
+    //    }
+    //    var texts = trans?.GetComponentsInChildren<TextMeshProUGUI>();
+    //    if (texts != null)
+    //    {
+    //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
+    //        {
+    //            for (int i = 0; i < texts.Length; ++i)
+    //            {
+    //                var sp = texts[i];
+    //                if (sp == null)
+    //                {
+    //                    continue;
+    //                }
+    //                Color c = sp.color;
+    //                c.a = value;
+    //                sp.color = c;
+    //            }
+    //        }).setEase(ease).updateNow();
+    //    }
+
+    //    var anims = trans?.GetComponentsInChildren<SkeletonGraphic>();
+    //    if (texts != null)
+    //    {
+    //        LeanTween.value(trans.gameObject, from, to, time).setOnUpdate((float value) =>
+    //        {
+    //            for (int i = 0; i < anims.Length; ++i)
+    //            {
+    //                var anim = anims[i];
+    //                if (anim == null)
+    //                {
+    //                    continue;
+    //                }
+    //                anim.Skeleton.A = value;
+    //            }
+    //        }).setEase(ease).updateNow();
+    //    }
+    //}
+
+    public static LTDescr AlphaImage(GameObject obj, float from, float to, float time)
+    {
+        var img = obj?.GetComponent<Image>();
+        if (img == null)
+        {
+            return null;
+        }
+        return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+        {
             if (img == null)
             {
-                return null;
+                return;
             }
-            return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
-            {
-                if (img == null)
-                {
-                    return;
-                }
-                Color c = img.color;
-                c.a = val;
-                img.color = c;
-            });
-        }
+            Color c = img.color;
+            c.a = val;
+            img.color = c;
+        });
+    }
 
     public static LTDescr AlphaGameObject(GameObject obj, float from, float to, float time)
     {
@@ -332,202 +359,202 @@ using UnityEngine.UI;
     //    });
     //}
     public static LTDescr AlphaText(GameObject obj, float from, float to, float time)
+    {
+        object txt;
+        bool isTextMesh = false;
+        if (obj == null)
         {
-            object txt;
-            bool isTextMesh = false;
-            if (obj == null)
+            return null;
+        }
+        if (obj.GetComponent<Text>() != null)
+        {
+            txt = obj.GetComponent<UnityEngine.UI.Text>();
+        }
+        else if (obj.GetComponent<TextMeshProUGUI>() != null)
+        {
+            txt = obj.GetComponent<TextMeshProUGUI>();
+            isTextMesh = true;
+        }
+        else
+        {
+            return null;
+        }
+        return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+        {
+            if (isTextMesh)
             {
-                return null;
-            }
-            if (obj.GetComponent<Text>() != null)
-            {
-                txt = obj.GetComponent<UnityEngine.UI.Text>();
-            }
-            else if (obj.GetComponent<TextMeshProUGUI>() != null)
-            {
-                txt = obj.GetComponent<TextMeshProUGUI>();
-                isTextMesh = true;
+                Color c = (txt as TextMeshProUGUI).color;
+                c.a = val;
+                (txt as TextMeshProUGUI).color = c;
             }
             else
             {
-                return null;
-            }
-            return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
-            {
-                if (isTextMesh)
-                {
-                    Color c = (txt as TextMeshProUGUI).color;
-                    c.a = val;
-                    (txt as TextMeshProUGUI).color = c;
-                }
-                else
-                {
-                    Color c = (txt as UnityEngine.UI.Text).color;
-                    c.a = val;
-                    (txt as UnityEngine.UI.Text).color = c;
-                }
-            });
-        }
-        public static LTDescr AlphaTextMeshPro(GameObject obj, float from, float to, float time)
-        {
-            if (obj == null)
-            {
-                return null;
-            }
-            var txt = obj.GetComponent<TextMeshPro>();
-            if (txt == null)
-            {
-                return null;
-            }
-            return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
-            {
-                Color c = txt.color;
+                Color c = (txt as UnityEngine.UI.Text).color;
                 c.a = val;
-                txt.color = c;
-            });
-        }
-        public static LTDescr AlphaTextMeshProUGUI(GameObject obj, float from, float to, float time)
+                (txt as UnityEngine.UI.Text).color = c;
+            }
+        });
+    }
+    public static LTDescr AlphaTextMeshPro(GameObject obj, float from, float to, float time)
+    {
+        if (obj == null)
         {
-            if (obj == null)
-            {
-                return null;
-            }
-            var txt = obj.GetComponent<TextMeshProUGUI>();
-            if (txt == null)
-            {
-                return null;
-            }
-            return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
-            {
-                Color c = txt.color;
-                c.a = val;
-                txt.color = c;
-            });
+            return null;
         }
-        public static LTDescr AlphaSpecialTextMesh(GameObject obj, float from, float to, float time)
+        var txt = obj.GetComponent<TextMeshPro>();
+        if (txt == null)
         {
-            var txt = obj?.GetComponent<MeshRenderer>();
-            if (txt == null)
-            {
-                return null;
-            }
-            Color tempColor;
-            return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
-            {
-                tempColor = txt.material.GetColor("_Color");
-                tempColor.a = val;
-                txt.material.SetColor("_Color", tempColor);
-            });
+            return null;
         }
-        //public static LTDescr AlphaSpineUI(GameObject obj, float from, float to, float time)
-        //{
-        //    SkeletonGraphic sg = obj?.GetComponent<SkeletonGraphic>();
-        //    if (sg == null)
-        //    {
-        //        return null;
-        //    }
-        //    return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
-        //    {
-        //        Color c = sg.color;
-        //        c.a = val;
-        //        sg.color = c;
-        //    });
-        //}
-        public static void AlphaParticle(GameObject obj, float to, float time)
+        return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
         {
-            if (obj == null)
+            Color c = txt.color;
+            c.a = val;
+            txt.color = c;
+        });
+    }
+    public static LTDescr AlphaTextMeshProUGUI(GameObject obj, float from, float to, float time)
+    {
+        if (obj == null)
+        {
+            return null;
+        }
+        var txt = obj.GetComponent<TextMeshProUGUI>();
+        if (txt == null)
+        {
+            return null;
+        }
+        return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+        {
+            Color c = txt.color;
+            c.a = val;
+            txt.color = c;
+        });
+    }
+    public static LTDescr AlphaSpecialTextMesh(GameObject obj, float from, float to, float time)
+    {
+        var txt = obj?.GetComponent<MeshRenderer>();
+        if (txt == null)
+        {
+            return null;
+        }
+        Color tempColor;
+        return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+        {
+            tempColor = txt.material.GetColor("_Color");
+            tempColor.a = val;
+            txt.material.SetColor("_Color", tempColor);
+        });
+    }
+    //public static LTDescr AlphaSpineUI(GameObject obj, float from, float to, float time)
+    //{
+    //    SkeletonGraphic sg = obj?.GetComponent<SkeletonGraphic>();
+    //    if (sg == null)
+    //    {
+    //        return null;
+    //    }
+    //    return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+    //    {
+    //        Color c = sg.color;
+    //        c.a = val;
+    //        sg.color = c;
+    //    });
+    //}
+    public static void AlphaParticle(GameObject obj, float to, float time)
+    {
+        if (obj == null)
+        {
+            return;
+        }
+        List<Material> mats = new List<Material>();
+        List<float> alphas = new List<float>();
+        void loopChildren(Transform trans)
+        {
+            foreach (Transform child in trans)
             {
-                return;
-            }
-            List<Material> mats = new List<Material>();
-            List<float> alphas = new List<float>();
-            void loopChildren(Transform trans)
-            {
-                foreach (Transform child in trans)
+                if (child.GetComponent<Renderer>() != null && child.GetComponent<Renderer>().material != null)
                 {
-                    if (child.GetComponent<Renderer>() != null && child.GetComponent<Renderer>().material != null)
+                    var mat = child.GetComponent<Renderer>().material;
+                    if (mat.HasProperty("_TintColor"))
                     {
-                        var mat = child.GetComponent<Renderer>().material;
-                        if (mat.HasProperty("_TintColor"))
-                        {
-                            var color = mat.GetColor("_TintColor");
-                            if (color != null)
-                            {
-                                mats.Add(mat);
-                                alphas.Add(color.a);
-                            }
-                        }
-                    }
-                    loopChildren(child);
-                }
-            }
-            loopChildren(obj.transform);
-
-            for (int i = 0; i < mats.Count && i < alphas.Count; ++i)
-            {
-                var index = i;
-                LeanTween.value(obj, alphas[i], to, time).setOnUpdate((float val) =>
-                {
-                    if (mats[index].HasProperty("_TintColor"))
-                    {
-                        var color = mats[index].GetColor("_TintColor");
+                        var color = mat.GetColor("_TintColor");
                         if (color != null)
-                        {
-                            color.a = val;
-                            mats[index].SetColor("_TintColor", color);
-                        }
-                    }
-                });
-            }
-        }
-        public static LTDescr AlphaParticle(GameObject obj, float from, float to, float time)
-        {
-            if (obj == null)
-            {
-                return null;
-            }
-            List<Material> mats = new List<Material>();
-            if (mats == null)
-            {
-                return null;
-            }
-            void loopChildren(Transform trans)
-            {
-                foreach (Transform child in trans)
-                {
-                    if (child.GetComponent<Renderer>() != null && child.GetComponent<Renderer>().material != null)
-                    {
-                        var mat = child.GetComponent<Renderer>().material;
-                        if (mat.HasProperty("_TintColor"))
                         {
                             mats.Add(mat);
-                            var color = mat.GetColor("_TintColor");
-                            if (color != null)
-                            {
-                                color.a = from;
-                                mat.SetColor("_TintColor", color);
-                            }
+                            alphas.Add(color.a);
                         }
                     }
-                    loopChildren(child);
                 }
+                loopChildren(child);
             }
-            loopChildren(obj.transform);
-            return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+        }
+        loopChildren(obj.transform);
+
+        for (int i = 0; i < mats.Count && i < alphas.Count; ++i)
+        {
+            var index = i;
+            LeanTween.value(obj, alphas[i], to, time).setOnUpdate((float val) =>
             {
-                for (int i = 0; i < mats.Count; i++)
+                if (mats[index].HasProperty("_TintColor"))
                 {
-                    if (mats[i].HasProperty("_TintColor"))
+                    var color = mats[index].GetColor("_TintColor");
+                    if (color != null)
                     {
-                        var color = mats[i].GetColor("_TintColor");
-                        if (color != null)
-                        {
-                            color.a = val;
-                            mats[i].SetColor("_TintColor", color);
-                        }
+                        color.a = val;
+                        mats[index].SetColor("_TintColor", color);
                     }
                 }
             });
         }
     }
+    public static LTDescr AlphaParticle(GameObject obj, float from, float to, float time)
+    {
+        if (obj == null)
+        {
+            return null;
+        }
+        List<Material> mats = new List<Material>();
+        if (mats == null)
+        {
+            return null;
+        }
+        void loopChildren(Transform trans)
+        {
+            foreach (Transform child in trans)
+            {
+                if (child.GetComponent<Renderer>() != null && child.GetComponent<Renderer>().material != null)
+                {
+                    var mat = child.GetComponent<Renderer>().material;
+                    if (mat.HasProperty("_TintColor"))
+                    {
+                        mats.Add(mat);
+                        var color = mat.GetColor("_TintColor");
+                        if (color != null)
+                        {
+                            color.a = from;
+                            mat.SetColor("_TintColor", color);
+                        }
+                    }
+                }
+                loopChildren(child);
+            }
+        }
+        loopChildren(obj.transform);
+        return LeanTween.value(obj, from, to, time).setOnUpdate((float val) =>
+        {
+            for (int i = 0; i < mats.Count; i++)
+            {
+                if (mats[i].HasProperty("_TintColor"))
+                {
+                    var color = mats[i].GetColor("_TintColor");
+                    if (color != null)
+                    {
+                        color.a = val;
+                        mats[i].SetColor("_TintColor", color);
+                    }
+                }
+            }
+        });
+    }
+}
 

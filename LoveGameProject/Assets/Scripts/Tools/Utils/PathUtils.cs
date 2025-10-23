@@ -47,6 +47,8 @@ public static partial class PathUtils {
 
     public static string ResPath = CombinePath("Assets", "AppData", "Res");
 
+    public static string UIPath = "UI";
+
     /************************************************************************/
     /* 游戏本地资源路径                                                      */
     /************************************************************************/

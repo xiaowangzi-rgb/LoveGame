@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "Game.Message";
+option go_package = "./;api";
+option optimize_for = SPEED;
+
+//用户数据
+message UserData{
+	bool isPlaying=1;
+}
+
+
+//游戏基础数据
+message BaseGameData{
+	int32 currentLevel=1;
+	bool isViewPreviousPlot=2;
+	bool isPlaying=3;
+	int32 playNum=4;
+	repeated int32 getScoreScene=5;
+}
+

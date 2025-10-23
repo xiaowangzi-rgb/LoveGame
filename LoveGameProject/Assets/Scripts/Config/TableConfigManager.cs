@@ -15,7 +15,11 @@ public class TableConfigManager : TSingleton<TableConfigManager>{
     /// </summary>
     /// <typeparam name="TableRoomConfig"></typeparam>
     /// <returns></returns>
-    public Table<TableRoomConfig> RoomTable {get;private set;} = new Table<TableRoomConfig>();
+    public Table<TableRoomConfig> RoomTable { get; private set; } = new Table<TableRoomConfig>();
+    /// <summary>
+    /// 弹窗表
+    /// </summary>
+    public Table<TableWindowSequeue> WindowSequeueTable { get; private set; } = new Table<TableWindowSequeue>();
 
     public void Init(){
 
@@ -24,5 +28,6 @@ public class TableConfigManager : TSingleton<TableConfigManager>{
     public void LoadTable(){
         //PlotTable.Load("Submarine_group_config.csv", () => new TablePlotConfig());
         RoomTable.Load("room_config.csv", () => new TableRoomConfig());
+        WindowSequeueTable.Load("room_config.csv", () => new TableWindowSequeue());
     }
 }
