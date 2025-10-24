@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: BaseResourcesGroup
+  m_EditorClassIdentifier: 
+  m_GroupName: BaseResourcesGroup
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 3eee32d631a4742b789286f25feb8d7d
+  m_SerializeEntries:
+  - m_GUID: 2f8129b1c9392a84ba52af6eab80a47f
+    m_Address: Players/Player.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+  - m_GUID: 2d21c24320e7aaa4dac191a11dcf7f9d
+    m_Address: Rooms/Room_01.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+  - m_GUID: fd3cb8a03a0a24829917fbfc83c2d4b5
+    m_Address: Rooms/Room_02.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefab
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0e6e5b98bc58f4ab5a1e89817b8f5e51, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4b3ccb27a93cd4231b2ac4d6559b3b59, type: 2}
+    - {fileID: 11400000, guid: c7661bc44645b467892a964fa7948c38, type: 2}
